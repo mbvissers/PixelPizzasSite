@@ -1,0 +1,3 @@
+/node_modules/
+# Project exclude paths
+/.next/
