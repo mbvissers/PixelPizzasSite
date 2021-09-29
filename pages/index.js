@@ -850,8 +850,7 @@ export default function Index(props) {
             notify(
                 (
                     <span>You can view your transaction on&nbsp;
-                        {/* TODO: Use regular polygonscan instead of Mumbai */}
-                        <a className={"underline"} target={"_blank"} href={"https://mumbai.polygonscan.com/tx/" + hash}>
+                        <a className={"underline"} target={"_blank"} href={"https://polygonscan.com/tx/" + hash}>
                             PolygonScan
                         </a>
                     </span>
