@@ -859,6 +859,7 @@ export default function Index(props) {
         }).catch((err) => console.log(err))
     }
 
+
     useEffect(() => {
         getAccount()
 
@@ -879,7 +880,6 @@ export default function Index(props) {
             counter === canvasArray.length - 1 ? counter = 0 : counter++
         }, 1450)
     }, [])
-
     // notification bar
     function notificationBar(message, bgClass = "bg-red-700") {
         return (
@@ -1069,7 +1069,7 @@ export default function Index(props) {
                                         <a target={"_blank"} className={"text-yellow-700 hover:text-yellow-900"}
                                            href={"https://mbvissers.medium.com/"}>Medium</a> and&nbsp;
                                         <a target={"_blank"} className={"text-yellow-700 hover:text-yellow-900"}
-                                           href={"https://twitter.com/MVissers4"}>Twitter</a>
+                                           href={"https://twitter.com/0xmbvissers"}>Twitter</a>
                                 </span>
                                 </div>
                             </div>
