@@ -1,4 +1,5 @@
-import React, {useState, useEffect} from 'react';
+import  {useState, useEffect} from 'react';
+import config from '../configuration';
 
 let Web3 = require('web3');
 
@@ -723,10 +724,10 @@ export default function Index(props) {
             "type": "receive"
         }
     ]
-    let contractAddress = "0xfd825CF48B155908A497E59864F7CD2D705D4669"
-    let ownerAddress = "0xDCE99c8475Fd38a3b8646DC39d582c7c2dce2DCA"
-    let owner2Address = "0xb279Eb50111dd34ee33106248c50C2FCd21284Cd"
-    let contractNetwork = "0x89" // Polygon is 0x89, Mumbai is 0x13881
+    let contractAddress = config.contractAddress
+    let ownerAddress = config.ownerAddress
+    let owner2Address = config.owner2Address
+    let contractNetwork = config.contractNetwork // Polygon is 0x89, Mumbai is 0x13881
     let eventListenersSet = false
     let price = "2" // 2 MATIC on prod
 
@@ -1008,7 +1009,7 @@ export default function Index(props) {
                     <div className={"flex flex-col lg:flex-row justify-between items-center py-16"}>
                         <div className={"flex-1 pb-16 lg:pb-0 lg:pr-24"}>
                             <h2 className={"text-2xl md:text-4xl font-bold text-white mb-2"}>How to mint your own random
-                                token</h2>
+                                pizza</h2>
                             <h5 className={"text-xl md:text-2xl font-bold text-white mb-2"}>{totalSupply ? totalSupply : "???"} /
                                 294 minted</h5>
                             <ol className={"text-xl md:text-2xl text-white list-decimal px-4 md:px-0"}>
