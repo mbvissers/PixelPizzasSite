@@ -1,3 +1,4 @@
 /node_modules/
 # Project exclude paths
 /.next/
+todo.txt
