@@ -1,4 +1,5 @@
 import  {useState, useEffect} from 'react';
+import Footer from '../components/footer';
 import config from '../configuration';
 
 let Web3 = require('web3');
@@ -346,7 +347,7 @@ export default function Index(props) {
                             <div className={"flex flex-col sm:flex-row items-center mb-8 sm:mb-0"}>
                                 <canvas id={"4"} height={120} width={120} className={"rounded-2xl"}/>
                                 <div className={"m-2 sm:m-8 text-center sm:text-left"}>
-                                    <span className={"text-2xl"}>mbvissers</span><br/>
+                                    <span className={"text-2xl"}>mbvissers.eth</span><br/>
                                     <span className={"text-lg"}>
                                     A student that likes everything from <br/>coding to cooking good food.<br/>
                                 </span>
@@ -355,7 +356,7 @@ export default function Index(props) {
                                         <a target={"_blank"} className={"text-yellow-700 hover:text-yellow-900"}
                                            href={"https://mbvissers.medium.com/"}>Medium</a> and&nbsp;
                                         <a target={"_blank"} className={"text-yellow-700 hover:text-yellow-900"}
-                                           href={"https://twitter.com/0xmbvissers"}>Twitter</a>
+                                           href={"https://twitter.com/0xmbvissers"}>Twitter</a>.
                                 </span>
                                 </div>
                             </div>
@@ -375,17 +376,7 @@ export default function Index(props) {
             </div>
 
             {/* Footer */}
-            <div className={"bg-yellow-800"}>
-                <div className={"container xl:px-48 mx-auto"}>
-                    <div className={"flex flex-col sm:flex-row justify-around items-center py-8 sm:py-16"}>
-                        {/* TODO: Set link to correct collection */}
-                        <a target={"_blank"} href={"https://opensea.io/collection/pixel-pizzas"}
-                           className={"text-2xl text-white font-bold pb-4 sm:pb-0"}>OpenSea</a>
-                        <a target={"_blank"} href={"https://polygonscan.com/token/" + config.contractAddress}
-                           className={"text-2xl text-white font-bold"}>PolygonScan</a>
-                    </div>
-                </div>
-            </div>
+            <Footer bgClass={"bg-yellow-800"} colorClass={"text-white"} />
         </>
 
     );

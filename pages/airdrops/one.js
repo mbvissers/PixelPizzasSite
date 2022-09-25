@@ -1,4 +1,6 @@
 import {useState, useEffect} from 'react';
+import Footer from '../../components/footer';
+import Layout from '../../components/layout';
 import config from '../../configuration'
 
 export default function AirdropOne() {
@@ -30,31 +32,15 @@ export default function AirdropOne() {
     }, [])
 
     return (
-        <div className={"flex flex-col justify-between"}>
+        <Layout noHeader={false} headerBgClass={"bg-yellow-300"}>
             {/* Intro */}
-            <div className={"p-8 pb-0 bg-yellow-300 h-screen"}>
+            <div className={"p-8 pb-0 "}>
                 <div className={"container xl:px-48 mx-auto"}>
-
-                    {/* Header */}
-                    <div className={"flex flex-grow flex-col lg:flex-row items-center justify-between"}>
-                        <span className={"text-2xl md:text-3xl font-bold text-black text-center lg:text-left"}>Pixel Pizzas</span>
-                        <button
-                            className={"btn-white rounded-full mt-4 lg:m-0"}
-                            onClick={() => {
-                                //getAccount()
-                            }}>
-                            {
-                                //address === null ? "Connect MetaMask" : address.substring(0, 13) + "..."
-                            }
-                            Connect MetaMask
-                        </button>
-                    </div>
-
                     {/* Jumbotron */}
                     <div
                         className={"flex flex-grow items-center flex-col lg:flex-row justify-between pt-8 lg:pt-32 h-max"}>
                         <div className={"pb-8 lg:pr-24"}>
-                            <h1 className={"text-4xl md:text-6xl font-bold text-black mb-4 text-center lg:text-left"}>Pixel
+                            <h1 className={"text-5xl md:text-6xl font-bold text-black mb-4 text-center lg:text-left"}>Pixel
                                 Pizzas</h1>
                             <h2 className={"text-xl md:text-4xl font-bold text-black text-center lg:text-left"}>
                                 Airdrop #1
@@ -66,19 +52,6 @@ export default function AirdropOne() {
                     </div>
                 </div>
             </div>
-
-            {/* Footer */}
-            <div className={"bg-blue-400"}>
-                <div className={"container xl:px-48 mx-auto"}>
-                    <div className={"flex flex-col sm:flex-row justify-around items-center py-8 sm:py-16"}>
-                        {/* TODO: Set link to correct collection */}
-                        <a target={"_blank"} href={"https://opensea.io/collection/pixel-pizzas"}
-                           className={"text-2xl text-black font-bold pb-4 sm:pb-0"}>OpenSea</a>
-                        <a target={"_blank"} href={"https://polygonscan.com/token/" + config.contractAddress}
-                           className={"text-2xl text-black font-bold"}>PolygonScan</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </Layout>
     )
 }
