@@ -18,15 +18,15 @@ export default function AirdropOne() {
     useEffect(() => {
 
         // Create canvas#1's slideshow
-        canvasDraw(0, "jumbotron")
-        let counter = 0;
-        let canvasArray = [1,2,3,4,0]
-        let interval = setInterval(() => {
-            // Draw image on canvas
-            canvasDraw(canvasArray[counter], "jumbotron")
-            // Update counter
-            counter === canvasArray.length - 1 ? counter = 0 : counter++
-        }, 1450)
+        // canvasDraw(0, "jumbotron")
+        // let counter = 0;
+        // let canvasArray = [1,2,3,4,0]
+        // let interval = setInterval(() => {
+        //     // Draw image on canvas
+        //     canvasDraw(canvasArray[counter], "jumbotron")
+        //     // Update counter
+        //     counter === canvasArray.length - 1 ? counter = 0 : counter++
+        // }, 1450)
     }, [])
 
     return (
@@ -44,8 +44,8 @@ export default function AirdropOne() {
                                 Airdrop #1
                             </h2> 
                             <div className={"flex flex-row justify-center lg:justify-start"}>
-                                <button className={"btn-white rounded-full mt-4 "}>
-                                    Claim
+                                <button className={"btn-white rounded-full mt-4 "} disabled>
+                                    Coming Soon
                                 </button>
                             </div>
                         </div>

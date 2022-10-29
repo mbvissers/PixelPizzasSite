@@ -10,12 +10,14 @@ export default function Index(props) {
     const [web3, setWeb3] = useState(null)
     const [contract, setContract] = useState(null)
     const [totalSupply, setTotalSupply] = useState(0)
+    const [balance, setBalance] = useState(0)
     const [notification, setNotification] = useState(null)
 
     const [URIField, setURIField] = useState("")
+    const [priceField, setPriceField] = useState(0)
 
     let eventListenersSet = false
-    let price = "2" // 2 MATIC on prod
+    let price = "0" // 2 MATIC on prod
     let free = true
 
     // Function to quickly draw a crypto pizza in a canvas to negate antialiasing
@@ -43,12 +45,18 @@ export default function Index(props) {
                 setNetwork(n)
                 let supply = 0;
 
-                n === config.contractNetwork ?
+                if(n === config.contractNetwork) {
                     c.methods.totalSupply().call().then((_supply) => {
                         supply = _supply
                         setTotalSupply(_supply)
                     }).catch((err) => console.log(err))
-                    : console.log("You're on the wrong network")
+                    c.methods.balanceOf(accounts[0]).call().then((_balance) => {
+                        setBalance(_balance)
+                        console.log(_balance)
+                    }).catch((err) => console.log(err))
+                } else { 
+                    console.log("You're on the wrong network") 
+                }
 
                 if (!eventListenersSet) {
                     ethereum.on('accountsChanged', function () {
@@ -64,7 +72,15 @@ export default function Index(props) {
             : console.log("Please install MetaMask")
     }
 
+    function fetchBalance() {
+        contract.methods.balanceOf(address).call().then((_balance) => {
+            setBalance(_balance)
+            console.log(_balance)
+        }).catch((err) => console.log(err))
+    }
+
     function mint(_amount) {
+        fetchBalance()
         let _price = web3.utils.toWei(price + "");
         let encoded = contract.methods.safeMint(_amount).encodeABI()
 
@@ -105,6 +121,24 @@ export default function Index(props) {
 
     function setBaseURI(_URI) {
         let encoded = contract.methods.setBaseURI(_URI).encodeABI()
+        let tx = {
+            from: address,
+            to: config.contractAddress,
+            data: encoded,
+            nonce: "0x00"
+        }
+
+        let txHash = ethereum.request({
+            method: 'eth_sendTransaction',
+            params: [tx],
+        }).then((hash) => {
+            notify((<span>You can view your transaction on&nbsp;<a className={"underline"} target={"_blank"}
+                                                                   href={"https://polygonscan.com/tx/" + hash}>PolygonScan</a></span>))
+        }).catch((err) => console.log(err))
+    }
+
+    function setPrice(_price) {
+        let encoded = contract.methods.setPrice(_price).encodeABI()
         let tx = {
             from: address,
             to: config.contractAddress,
@@ -167,7 +201,12 @@ export default function Index(props) {
             // Update counter
             counter === canvasArray.length - 1 ? counter = 0 : counter++
         }, 1450)
+
+        return () => {
+            clearInterval(interval)
+        }
     }, [])
+
     // notification bar
     function notificationBar(message, bgClass = "bg-red-700", textClass = "text-white") {
         return (
@@ -197,6 +236,10 @@ export default function Index(props) {
                     <input className={"border-2 p-1"} type="text" value={URIField} onChange={(e) => setURIField(e.target.value)}/>
                     <button className={"btn-blue"} onClick={() => setBaseURI(URIField)}>Set Base URI</button>
                 </div>
+                <div className={"flex flex-row justify-center items-center"}>
+                    <input className={"border-2 p-1"} type="number" value={priceField} onChange={(e) => setPriceField(e.target.value)}/>
+                    <button className={"btn-blue"} onClick={() => setPrice(priceField)}>Set Price</button>
+                </div>
             </div>
         )
     }
@@ -218,7 +261,7 @@ export default function Index(props) {
     return (
         <>
             {/* Notification bar */}
-            {free ? notificationBar("Now mintable for free!", "bg-green-500", "text-black") : null}
+            {free ? notificationBar("Now open-source and mintable for free!", "bg-green-500", "text-black") : null}
             {address === config.ownerAddress.toLowerCase() ? notificationBar("Logged in as owner") : null}
             {network === null ? notificationBar("You need to connect your wallet to mint your own tokens", "bg-indigo-800") : null}
             {network !== "0x89" && network !== null ? notificationBar("You're not logged in on the Polygon Mainnet") : null}
@@ -276,9 +319,9 @@ export default function Index(props) {
                                 A Pixel Pizza is a randomly generated NFT with unique properties.
                                 Every single pizza is one of a kind. All tokens are safely stored on the Polygon
                                 blockchain and their properties on IPFS.
-                                You can mint your own pizza for <s style={{textDecorationThickness: '4px'}}>just <strong>{price}&nbsp;MATIC</strong></s>&nbsp;<strong>FREE</strong> while supplies
+                                You can mint your own pizza for <s style={{textDecorationThickness: '4px'}}>just <strong>2&nbsp;MATIC</strong></s>&nbsp;<strong>FREE</strong> while supplies
 
-                                last, or check the already minted ones out on OpenSea.
+                                last, or check the minted ones out on OpenSea.
                                 <br/>
                                 <a className={"text-center lg:text-left"} target={"_blank"}
                                    href={"https://opensea.io/collection/pixel-pizzas"}>
@@ -305,31 +348,21 @@ export default function Index(props) {
                                 <li className={"mb-2"}>Connect your <a className={"underline"} target={"_blank"}
                                                                        href={"https://metamask.io/"}>MetaMask</a> wallet
                                     by clicking the button at the top of this page. <br/></li>
-                                <li className={"mb-2"}>Make sure you're connected to the <a target={"_blank"}
+                                <li className={"mb-2"}>Make sure you're connected to the <a target={"_blank"} style={{textDecoration: 'underline', fontWeight: 'bold'}}
                                                                                             href={"https://docs.matic.network/docs/develop/metamask/config-polygon-on-metamask/"}>Polygon
                                     mainnet</a>.
                                 </li>
-                                <li className={"mb-2"}>Mint your own random token(s) by clicking a button below. <br/>
+                                <li className={"mb-2"}>Mint your own random token(s) by clicking the button below. Max 5 tokens.<br/>
                                 </li>
-                                <li className={"mb-2"}>Accept the payment&nbsp;&amp;&nbsp;gasfees and wait for the
+                                <li className={"mb-2"}>Accept the <s style={{textDecorationThickness: '4px'}}>payment&nbsp;&amp;</s>&nbsp;gasfees and wait for the
                                     blockchain to confirm the transaction. <br/></li>
                                 <li className={"mb-2"}>You can now view your NFT on OpenSea and PolygonScan!</li>
                             </ol>
                             <div className={"flex mt-6 justify-center lg:justify-start"}>
                                 <button
-                                    disabled={!(network === config.contractNetwork && totalSupply <= 294 - 1)}
-                                    className={"btn-white rounded-l-full border-r-2"}
+                                    disabled={balance > 4 || !(network === config.contractNetwork && totalSupply <= 294 - 1)}
+                                    className={"btn-white rounded-full border-r-2 w-full"}
                                     onClick={() => mint(1)}>Mint 1
-                                </button>
-                                <button
-                                    disabled={!(network === config.contractNetwork && totalSupply <= 294 - 2)}
-                                    className={"btn-white border-r-2"}
-                                    onClick={() => mint(2)}>Mint 2
-                                </button>
-                                <button
-                                    disabled={!(network === config.contractNetwork && totalSupply <= 294 - 5)}
-                                    className={"btn-white rounded-r-full"}
-                                    onClick={() => mint(5)}>Mint 5
                                 </button>
                             </div>
                         </div>

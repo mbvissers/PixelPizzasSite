@@ -2,4 +2,5 @@
 # Project exclude paths
 /.next/
 todo.txt
-public/images/
+public/images/unused/
+public/images/airdrops/unused/
