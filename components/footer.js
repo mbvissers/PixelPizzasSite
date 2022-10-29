@@ -13,6 +13,8 @@ export default function Footer(props) {
                     className={"text-2xl font-bold pb-4 sm:pb-0 " + props.colorClass}>OpenSea</a>
                     <a target={"_blank"} href={"https://polygonscan.com/token/" + config.contractAddress}
                     className={"text-2xl font-bold " + props.colorClass}>PolygonScan</a>
+                    <a target={"_blank"} href={"https://github.com/mbvissers/PixelPizzasSite"}
+                    className={"text-2xl font-bold " + props.colorClass}>GitHub</a>
                 </div>
             </div>
         </div>

@@ -1,7 +1,5 @@
 import {useState, useEffect} from 'react';
-import Footer from '../../components/footer';
-import Layout from '../../components/layout';
-import config from '../../configuration'
+import FullscreenLayout from '../../components/fullscreenLayout';
 
 export default function AirdropOne() {
 
@@ -32,7 +30,7 @@ export default function AirdropOne() {
     }, [])
 
     return (
-        <Layout noHeader={false} headerBgClass={"bg-yellow-300"}>
+        <FullscreenLayout noHeader={false} headerBgClass={"bg-yellow-300"}>
             {/* Intro */}
             <div className={"p-8 pb-0 "}>
                 <div className={"container xl:px-48 mx-auto"}>
@@ -44,7 +42,12 @@ export default function AirdropOne() {
                                 Pizzas</h1>
                             <h2 className={"text-xl md:text-4xl font-bold text-black text-center lg:text-left"}>
                                 Airdrop #1
-                            </h2>
+                            </h2> 
+                            <div className={"flex flex-row justify-center lg:justify-start"}>
+                                <button className={"btn-white rounded-full mt-4 "}>
+                                    Claim
+                                </button>
+                            </div>
                         </div>
                         <div className={"flex flex-shrink-0 items-center justify-center"}>
                             <canvas id={"jumbotron"} height={480} width={480} className={"pizza"}/>
@@ -52,6 +55,6 @@ export default function AirdropOne() {
                     </div>
                 </div>
             </div>
-        </Layout>
+        </FullscreenLayout>
     )
 }

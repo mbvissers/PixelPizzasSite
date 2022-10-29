@@ -16,6 +16,7 @@ export default function Index(props) {
 
     let eventListenersSet = false
     let price = "2" // 2 MATIC on prod
+    let free = true
 
     // Function to quickly draw a crypto pizza in a canvas to negate antialiasing
     function canvasDraw(imgId, canvasId, size = 480) {
@@ -168,11 +169,11 @@ export default function Index(props) {
         }, 1450)
     }, [])
     // notification bar
-    function notificationBar(message, bgClass = "bg-red-700") {
+    function notificationBar(message, bgClass = "bg-red-700", textClass = "text-white") {
         return (
             <div className={"p-4 " + bgClass}>
                 <div className={"flex flex-row justify-center items-center"}>
-                <span className={"font-bold text-white"}>
+                <span className={"font-bold " + textClass}>
                     {message}
                 </span>
                 </div>
@@ -217,8 +218,9 @@ export default function Index(props) {
     return (
         <>
             {/* Notification bar */}
+            {free ? notificationBar("Now mintable for free!", "bg-green-500", "text-black") : null}
             {address === config.ownerAddress.toLowerCase() ? notificationBar("Logged in as owner") : null}
-            {network === null ? notificationBar("You need to install MetaMask to mint your own tokens", "bg-indigo-800") : null}
+            {network === null ? notificationBar("You need to connect your wallet to mint your own tokens", "bg-indigo-800") : null}
             {network !== "0x89" && network !== null ? notificationBar("You're not logged in on the Polygon Mainnet") : null}
 
             {/* Dev tools */}
@@ -274,7 +276,8 @@ export default function Index(props) {
                                 A Pixel Pizza is a randomly generated NFT with unique properties.
                                 Every single pizza is one of a kind. All tokens are safely stored on the Polygon
                                 blockchain and their properties on IPFS.
-                                You can mint your own pizza for just <strong>{price}&nbsp;MATIC</strong> while supplies
+                                You can mint your own pizza for <s style={{textDecorationThickness: '4px'}}>just <strong>{price}&nbsp;MATIC</strong></s>&nbsp;<strong>FREE</strong> while supplies
+
                                 last, or check the already minted ones out on OpenSea.
                                 <br/>
                                 <a className={"text-center lg:text-left"} target={"_blank"}
@@ -349,7 +352,7 @@ export default function Index(props) {
                                 <div className={"m-2 sm:m-8 text-center sm:text-left"}>
                                     <span className={"text-2xl"}>mbvissers.eth</span><br/>
                                     <span className={"text-lg"}>
-                                    A student that likes everything from <br/>coding to cooking good food.<br/>
+                                    A developer that likes everything <br/>from coding to cooking good food.<br/>
                                 </span>
                                     <span className={"text-lg"}>
                                     Find me on&nbsp;
