@@ -1,4 +1,6 @@
-import React, {useState, useEffect} from 'react';
+import  {useState, useEffect} from 'react';
+import Footer from '../components/footer';
+import config from '../configuration';
 
 let Web3 = require('web3');
 
@@ -8,727 +10,15 @@ export default function Index(props) {
     const [web3, setWeb3] = useState(null)
     const [contract, setContract] = useState(null)
     const [totalSupply, setTotalSupply] = useState(0)
+    const [balance, setBalance] = useState(0)
     const [notification, setNotification] = useState(null)
 
     const [URIField, setURIField] = useState("")
+    const [priceField, setPriceField] = useState(0)
 
-    let abi = [
-        {
-            "inputs": [
-                {
-                    "internalType": "address[]",
-                    "name": "_payees",
-                    "type": "address[]"
-                },
-                {
-                    "internalType": "uint256[]",
-                    "name": "_shares",
-                    "type": "uint256[]"
-                }
-            ],
-            "stateMutability": "payable",
-            "type": "constructor"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                {
-                    "indexed": true,
-                    "internalType": "address",
-                    "name": "owner",
-                    "type": "address"
-                },
-                {
-                    "indexed": true,
-                    "internalType": "address",
-                    "name": "approved",
-                    "type": "address"
-                },
-                {
-                    "indexed": true,
-                    "internalType": "uint256",
-                    "name": "tokenId",
-                    "type": "uint256"
-                }
-            ],
-            "name": "Approval",
-            "type": "event"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                {
-                    "indexed": true,
-                    "internalType": "address",
-                    "name": "owner",
-                    "type": "address"
-                },
-                {
-                    "indexed": true,
-                    "internalType": "address",
-                    "name": "operator",
-                    "type": "address"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "bool",
-                    "name": "approved",
-                    "type": "bool"
-                }
-            ],
-            "name": "ApprovalForAll",
-            "type": "event"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                {
-                    "indexed": true,
-                    "internalType": "address",
-                    "name": "previousOwner",
-                    "type": "address"
-                },
-                {
-                    "indexed": true,
-                    "internalType": "address",
-                    "name": "newOwner",
-                    "type": "address"
-                }
-            ],
-            "name": "OwnershipTransferred",
-            "type": "event"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                {
-                    "indexed": false,
-                    "internalType": "address",
-                    "name": "account",
-                    "type": "address"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "uint256",
-                    "name": "shares",
-                    "type": "uint256"
-                }
-            ],
-            "name": "PayeeAdded",
-            "type": "event"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                {
-                    "indexed": false,
-                    "internalType": "address",
-                    "name": "from",
-                    "type": "address"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "uint256",
-                    "name": "amount",
-                    "type": "uint256"
-                }
-            ],
-            "name": "PaymentReceived",
-            "type": "event"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                {
-                    "indexed": false,
-                    "internalType": "address",
-                    "name": "to",
-                    "type": "address"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "uint256",
-                    "name": "amount",
-                    "type": "uint256"
-                }
-            ],
-            "name": "PaymentReleased",
-            "type": "event"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                {
-                    "indexed": true,
-                    "internalType": "address",
-                    "name": "from",
-                    "type": "address"
-                },
-                {
-                    "indexed": true,
-                    "internalType": "address",
-                    "name": "to",
-                    "type": "address"
-                },
-                {
-                    "indexed": true,
-                    "internalType": "uint256",
-                    "name": "tokenId",
-                    "type": "uint256"
-                }
-            ],
-            "name": "Transfer",
-            "type": "event"
-        },
-        {
-            "inputs": [],
-            "name": "MAX_TOKENS",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "MAX_TOKENS_PER_SALE",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "to",
-                    "type": "address"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "tokenId",
-                    "type": "uint256"
-                }
-            ],
-            "name": "approve",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "owner",
-                    "type": "address"
-                }
-            ],
-            "name": "balanceOf",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "flipSaleStatus",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "tokenId",
-                    "type": "uint256"
-                }
-            ],
-            "name": "getApproved",
-            "outputs": [
-                {
-                    "internalType": "address",
-                    "name": "",
-                    "type": "address"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "owner",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address",
-                    "name": "operator",
-                    "type": "address"
-                }
-            ],
-            "name": "isApprovedForAll",
-            "outputs": [
-                {
-                    "internalType": "bool",
-                    "name": "",
-                    "type": "bool"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "isSaleActive",
-            "outputs": [
-                {
-                    "internalType": "bool",
-                    "name": "",
-                    "type": "bool"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "name",
-            "outputs": [
-                {
-                    "internalType": "string",
-                    "name": "",
-                    "type": "string"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "owner",
-            "outputs": [
-                {
-                    "internalType": "address",
-                    "name": "",
-                    "type": "address"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "tokenId",
-                    "type": "uint256"
-                }
-            ],
-            "name": "ownerOf",
-            "outputs": [
-                {
-                    "internalType": "address",
-                    "name": "",
-                    "type": "address"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "index",
-                    "type": "uint256"
-                }
-            ],
-            "name": "payee",
-            "outputs": [
-                {
-                    "internalType": "address",
-                    "name": "",
-                    "type": "address"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address payable",
-                    "name": "account",
-                    "type": "address"
-                }
-            ],
-            "name": "release",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "account",
-                    "type": "address"
-                }
-            ],
-            "name": "released",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "renounceOwnership",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "_amount",
-                    "type": "uint256"
-                }
-            ],
-            "name": "reserveTokens",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "_amount",
-                    "type": "uint256"
-                }
-            ],
-            "name": "safeMint",
-            "outputs": [],
-            "stateMutability": "payable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "from",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address",
-                    "name": "to",
-                    "type": "address"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "tokenId",
-                    "type": "uint256"
-                }
-            ],
-            "name": "safeTransferFrom",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "from",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address",
-                    "name": "to",
-                    "type": "address"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "tokenId",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "bytes",
-                    "name": "_data",
-                    "type": "bytes"
-                }
-            ],
-            "name": "safeTransferFrom",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "operator",
-                    "type": "address"
-                },
-                {
-                    "internalType": "bool",
-                    "name": "approved",
-                    "type": "bool"
-                }
-            ],
-            "name": "setApprovalForAll",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "string",
-                    "name": "_newBaseURI",
-                    "type": "string"
-                }
-            ],
-            "name": "setBaseURI",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "_price",
-                    "type": "uint256"
-                }
-            ],
-            "name": "setPrice",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "account",
-                    "type": "address"
-                }
-            ],
-            "name": "shares",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "bytes4",
-                    "name": "interfaceId",
-                    "type": "bytes4"
-                }
-            ],
-            "name": "supportsInterface",
-            "outputs": [
-                {
-                    "internalType": "bool",
-                    "name": "",
-                    "type": "bool"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "symbol",
-            "outputs": [
-                {
-                    "internalType": "string",
-                    "name": "",
-                    "type": "string"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "index",
-                    "type": "uint256"
-                }
-            ],
-            "name": "tokenByIndex",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "owner",
-                    "type": "address"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "index",
-                    "type": "uint256"
-                }
-            ],
-            "name": "tokenOfOwnerByIndex",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "tokenId",
-                    "type": "uint256"
-                }
-            ],
-            "name": "tokenURI",
-            "outputs": [
-                {
-                    "internalType": "string",
-                    "name": "",
-                    "type": "string"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "totalReleased",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "totalShares",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "totalSupply",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "from",
-                    "type": "address"
-                },
-                {
-                    "internalType": "address",
-                    "name": "to",
-                    "type": "address"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "tokenId",
-                    "type": "uint256"
-                }
-            ],
-            "name": "transferFrom",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "newOwner",
-                    "type": "address"
-                }
-            ],
-            "name": "transferOwnership",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "stateMutability": "payable",
-            "type": "receive"
-        }
-    ]
-    let contractAddress = "0xfd825CF48B155908A497E59864F7CD2D705D4669"
-    let ownerAddress = "0xDCE99c8475Fd38a3b8646DC39d582c7c2dce2DCA"
-    let owner2Address = "0xb279Eb50111dd34ee33106248c50C2FCd21284Cd"
-    let contractNetwork = "0x89" // Polygon is 0x89, Mumbai is 0x13881
     let eventListenersSet = false
-    let price = "2" // 2 MATIC on prod
+    let price = "0" // 2 MATIC on prod
+    let free = true
 
     // Function to quickly draw a crypto pizza in a canvas to negate antialiasing
     function canvasDraw(imgId, canvasId, size = 480) {
@@ -749,18 +39,24 @@ export default function Index(props) {
                 setAddress(accounts[0])
                 let w3 = new Web3(ethereum)
                 setWeb3(w3)
-                let c = new w3.eth.Contract(abi, contractAddress)
+                let c = new w3.eth.Contract(config.abi, config.contractAddress)
                 setContract(c)
                 let n = ethereum.chainId
                 setNetwork(n)
                 let supply = 0;
 
-                n === contractNetwork ?
+                if(n === config.contractNetwork) {
                     c.methods.totalSupply().call().then((_supply) => {
                         supply = _supply
                         setTotalSupply(_supply)
                     }).catch((err) => console.log(err))
-                    : console.log("You're on the wrong network")
+                    c.methods.balanceOf(accounts[0]).call().then((_balance) => {
+                        setBalance(_balance)
+                        console.log(_balance)
+                    }).catch((err) => console.log(err))
+                } else { 
+                    console.log("You're on the wrong network") 
+                }
 
                 if (!eventListenersSet) {
                     ethereum.on('accountsChanged', function () {
@@ -776,13 +72,21 @@ export default function Index(props) {
             : console.log("Please install MetaMask")
     }
 
+    function fetchBalance() {
+        contract.methods.balanceOf(address).call().then((_balance) => {
+            setBalance(_balance)
+            console.log(_balance)
+        }).catch((err) => console.log(err))
+    }
+
     function mint(_amount) {
+        fetchBalance()
         let _price = web3.utils.toWei(price + "");
         let encoded = contract.methods.safeMint(_amount).encodeABI()
 
         let tx = {
             from: address,
-            to: contractAddress,
+            to: config.contractAddress,
             data: encoded,
             nonce: "0x00",
             value: web3.utils.numberToHex(_price * _amount)
@@ -801,7 +105,7 @@ export default function Index(props) {
         let encoded = contract.methods.release(address).encodeABI()
         let tx = {
             from: address,
-            to: contractAddress,
+            to: config.contractAddress,
             data: encoded,
             nonce: "0x00"
         }
@@ -819,7 +123,25 @@ export default function Index(props) {
         let encoded = contract.methods.setBaseURI(_URI).encodeABI()
         let tx = {
             from: address,
-            to: contractAddress,
+            to: config.contractAddress,
+            data: encoded,
+            nonce: "0x00"
+        }
+
+        let txHash = ethereum.request({
+            method: 'eth_sendTransaction',
+            params: [tx],
+        }).then((hash) => {
+            notify((<span>You can view your transaction on&nbsp;<a className={"underline"} target={"_blank"}
+                                                                   href={"https://polygonscan.com/tx/" + hash}>PolygonScan</a></span>))
+        }).catch((err) => console.log(err))
+    }
+
+    function setPrice(_price) {
+        let encoded = contract.methods.setPrice(_price).encodeABI()
+        let tx = {
+            from: address,
+            to: config.contractAddress,
             data: encoded,
             nonce: "0x00"
         }
@@ -837,7 +159,7 @@ export default function Index(props) {
         let encoded = contract.methods.reserveTokens(_amount).encodeABI()
         let tx = {
             from: address,
-            to: contractAddress,
+            to: config.contractAddress,
             data: encoded,
             nonce: "0x00"
         }
@@ -879,13 +201,18 @@ export default function Index(props) {
             // Update counter
             counter === canvasArray.length - 1 ? counter = 0 : counter++
         }, 1450)
+
+        return () => {
+            clearInterval(interval)
+        }
     }, [])
+
     // notification bar
-    function notificationBar(message, bgClass = "bg-red-700") {
+    function notificationBar(message, bgClass = "bg-red-700", textClass = "text-white") {
         return (
             <div className={"p-4 " + bgClass}>
                 <div className={"flex flex-row justify-center items-center"}>
-                <span className={"font-bold text-white"}>
+                <span className={"font-bold " + textClass}>
                     {message}
                 </span>
                 </div>
@@ -909,6 +236,10 @@ export default function Index(props) {
                     <input className={"border-2 p-1"} type="text" value={URIField} onChange={(e) => setURIField(e.target.value)}/>
                     <button className={"btn-blue"} onClick={() => setBaseURI(URIField)}>Set Base URI</button>
                 </div>
+                <div className={"flex flex-row justify-center items-center"}>
+                    <input className={"border-2 p-1"} type="number" value={priceField} onChange={(e) => setPriceField(e.target.value)}/>
+                    <button className={"btn-blue"} onClick={() => setPrice(priceField)}>Set Price</button>
+                </div>
             </div>
         )
     }
@@ -930,12 +261,13 @@ export default function Index(props) {
     return (
         <>
             {/* Notification bar */}
-            {address === ownerAddress.toLowerCase() ? notificationBar("Logged in as owner") : null}
-            {network === null ? notificationBar("You need to install MetaMask to mint your own tokens", "bg-indigo-800") : null}
+            {free ? notificationBar("Now open-source and mintable for free!", "bg-green-500", "text-black") : null}
+            {address === config.ownerAddress.toLowerCase() ? notificationBar("Logged in as owner") : null}
+            {network === null ? notificationBar("You need to connect your wallet to mint your own tokens", "bg-indigo-800") : null}
             {network !== "0x89" && network !== null ? notificationBar("You're not logged in on the Polygon Mainnet") : null}
 
             {/* Dev tools */}
-            {address === ownerAddress.toLowerCase() || address === owner2Address.toLowerCase() ? developerTools() : null}
+            {address === config.ownerAddress.toLowerCase() || address === config.owner2Address.toLowerCase() ? developerTools() : null}
 
             {notification}
 
@@ -987,8 +319,9 @@ export default function Index(props) {
                                 A Pixel Pizza is a randomly generated NFT with unique properties.
                                 Every single pizza is one of a kind. All tokens are safely stored on the Polygon
                                 blockchain and their properties on IPFS.
-                                You can mint your own pizza for just <strong>{price}&nbsp;MATIC</strong> while supplies
-                                last, or check the already minted ones out on OpenSea.
+                                You can mint your own pizza for <s style={{textDecorationThickness: '4px'}}>just <strong>2&nbsp;MATIC</strong></s>&nbsp;<strong>FREE</strong> while supplies
+
+                                last, or check the minted ones out on OpenSea.
                                 <br/>
                                 <a className={"text-center lg:text-left"} target={"_blank"}
                                    href={"https://opensea.io/collection/pixel-pizzas"}>
@@ -1008,38 +341,28 @@ export default function Index(props) {
                     <div className={"flex flex-col lg:flex-row justify-between items-center py-16"}>
                         <div className={"flex-1 pb-16 lg:pb-0 lg:pr-24"}>
                             <h2 className={"text-2xl md:text-4xl font-bold text-white mb-2"}>How to mint your own random
-                                token</h2>
+                                pizza</h2>
                             <h5 className={"text-xl md:text-2xl font-bold text-white mb-2"}>{totalSupply ? totalSupply : "???"} /
                                 294 minted</h5>
                             <ol className={"text-xl md:text-2xl text-white list-decimal px-4 md:px-0"}>
                                 <li className={"mb-2"}>Connect your <a className={"underline"} target={"_blank"}
                                                                        href={"https://metamask.io/"}>MetaMask</a> wallet
                                     by clicking the button at the top of this page. <br/></li>
-                                <li className={"mb-2"}>Make sure you're connected to the <a target={"_blank"}
+                                <li className={"mb-2"}>Make sure you're connected to the <a target={"_blank"} style={{textDecoration: 'underline', fontWeight: 'bold'}}
                                                                                             href={"https://docs.matic.network/docs/develop/metamask/config-polygon-on-metamask/"}>Polygon
                                     mainnet</a>.
                                 </li>
-                                <li className={"mb-2"}>Mint your own random token(s) by clicking a button below. <br/>
+                                <li className={"mb-2"}>Mint your own random token(s) by clicking the button below. Max 5 tokens.<br/>
                                 </li>
-                                <li className={"mb-2"}>Accept the payment&nbsp;&amp;&nbsp;gasfees and wait for the
+                                <li className={"mb-2"}>Accept the <s style={{textDecorationThickness: '4px'}}>payment&nbsp;&amp;</s>&nbsp;gasfees and wait for the
                                     blockchain to confirm the transaction. <br/></li>
                                 <li className={"mb-2"}>You can now view your NFT on OpenSea and PolygonScan!</li>
                             </ol>
                             <div className={"flex mt-6 justify-center lg:justify-start"}>
                                 <button
-                                    disabled={!(network === contractNetwork && totalSupply <= 294 - 1)}
-                                    className={"btn-white rounded-l-full border-r-2"}
+                                    disabled={balance > 4 || !(network === config.contractNetwork && totalSupply <= 294 - 1)}
+                                    className={"btn-white rounded-full border-r-2 w-full"}
                                     onClick={() => mint(1)}>Mint 1
-                                </button>
-                                <button
-                                    disabled={!(network === contractNetwork && totalSupply <= 294 - 2)}
-                                    className={"btn-white border-r-2"}
-                                    onClick={() => mint(2)}>Mint 2
-                                </button>
-                                <button
-                                    disabled={!(network === contractNetwork && totalSupply <= 294 - 5)}
-                                    className={"btn-white rounded-r-full"}
-                                    onClick={() => mint(5)}>Mint 5
                                 </button>
                             </div>
                         </div>
@@ -1060,16 +383,16 @@ export default function Index(props) {
                             <div className={"flex flex-col sm:flex-row items-center mb-8 sm:mb-0"}>
                                 <canvas id={"4"} height={120} width={120} className={"rounded-2xl"}/>
                                 <div className={"m-2 sm:m-8 text-center sm:text-left"}>
-                                    <span className={"text-2xl"}>mbvissers</span><br/>
+                                    <span className={"text-2xl"}>mbvissers.eth</span><br/>
                                     <span className={"text-lg"}>
-                                    A student that likes everything from <br/>coding to cooking good food.<br/>
+                                    A developer that likes everything <br/>from coding to cooking good food.<br/>
                                 </span>
                                     <span className={"text-lg"}>
                                     Find me on&nbsp;
                                         <a target={"_blank"} className={"text-yellow-700 hover:text-yellow-900"}
                                            href={"https://mbvissers.medium.com/"}>Medium</a> and&nbsp;
                                         <a target={"_blank"} className={"text-yellow-700 hover:text-yellow-900"}
-                                           href={"https://twitter.com/0xmbvissers"}>Twitter</a>
+                                           href={"https://twitter.com/0xmbvissers"}>Twitter</a>.
                                 </span>
                                 </div>
                             </div>
@@ -1089,17 +412,7 @@ export default function Index(props) {
             </div>
 
             {/* Footer */}
-            <div className={"bg-yellow-800"}>
-                <div className={"container xl:px-48 mx-auto"}>
-                    <div className={"flex flex-col sm:flex-row justify-around items-center py-8 sm:py-16"}>
-                        {/* TODO: Set link to correct collection */}
-                        <a target={"_blank"} href={"https://opensea.io/collection/pixel-pizzas"}
-                           className={"text-2xl text-white font-bold pb-4 sm:pb-0"}>OpenSea</a>
-                        <a target={"_blank"} href={"https://polygonscan.com/token/" + contractAddress}
-                           className={"text-2xl text-white font-bold"}>PolygonScan</a>
-                    </div>
-                </div>
-            </div>
+            <Footer bgClass={"bg-yellow-800"} colorClass={"text-white"} />
         </>
 
     );

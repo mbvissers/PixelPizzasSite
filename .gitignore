@@ -1,3 +1,6 @@
 /node_modules/
 # Project exclude paths
 /.next/
+todo.txt
+public/images/unused/
+public/images/airdrops/unused/
