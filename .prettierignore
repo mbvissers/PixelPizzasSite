@@ -1,0 +1,8 @@
+# Ignore artifacts:
+packages/contracts/cache
+packages/contracts/artifacts
+packages/webapp/.next
+node_modules
+packages/contracts/node_modules
+packages/webapp/node_modules
+.vscode

@@ -3,27 +3,27 @@
 @tailwind utilities;
 
 @layer components {
-    .btn-blue {
-        @apply font-bold text-white px-6 py-4 bg-yellow-800 hover:bg-yellow-900 text-xl shadow-lg
-    }
+  .btn-blue {
+    @apply font-bold text-white px-6 py-4 bg-yellow-800 hover:bg-yellow-900 text-xl shadow-lg;
+  }
 
-    .btn-white {
-        @apply font-bold px-8 py-4 bg-white hover:bg-yellow-100 text-xl shadow-lg
-    }
+  .btn-white {
+    @apply font-bold px-8 py-4 bg-white hover:bg-yellow-100 text-xl shadow-lg;
+  }
 
-    .btn-white:disabled {
-        @apply bg-gray-200 cursor-not-allowed text-gray-600
-    }
+  .btn-white:disabled {
+    @apply bg-gray-200 cursor-not-allowed text-gray-600;
+  }
 
-    canvas.pizza {
-        @apply rounded-2xl w-full
-    }
+  canvas.pizza {
+    @apply rounded-2xl w-full;
+  }
 }
 
 canvas {
-    image-rendering: auto;
-    image-rendering: crisp-edges;
-    image-rendering: pixelated;
-    image-rendering: -moz-crisp-edges;
-    image-rendering: -webkit-crisp-edges;
+  image-rendering: auto;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
 }
