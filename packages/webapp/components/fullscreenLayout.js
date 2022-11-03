@@ -1,19 +1,18 @@
-import  {useState, useEffect} from 'react';
-import config from '../configuration';
-import Footer from './footer';
-import Header from './header';
+import { useState, useEffect } from "react";
+import config from "../configuration";
+import Footer from "./footer";
+import Header from "./header";
 
-let Web3 = require('web3');
+let Web3 = require("web3");
 
 export default function FullscreenLayout(props) {
-
-    return (
-        <>  
-            <div className={"h-screen " + props.headerBgClass}>
-                { props.noHeader ? null : <Header bgClass={props.headerBgClass} />}
-                {props.children}
-            </div>
-            <Footer bgClass={"bg-blue-400"} colorClass={"text-black"} />
-        </>
-    )
+  return (
+    <>
+      <div className={"h-screen " + props.headerBgClass}>
+        {props.noHeader ? null : <Header bgClass={props.headerBgClass} />}
+        {props.children}
+      </div>
+      <Footer bgClass={"bg-blue-400"} colorClass={"text-black"} />
+    </>
+  );
 }
